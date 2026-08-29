@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { apiFetch } from "@/lib/api";
 
@@ -116,6 +118,7 @@ function AdminOrdersPage() {
       );
     },
     onSuccess: async (response) => {
+      toast.success("Order updated");
       setOrderModalOpen(false);
       setSelectedOrder(null);
       if (response.status === "completed") {
@@ -124,7 +127,28 @@ function AdminOrdersPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
         queryClient.invalidateQueries({ queryKey: ["admin-inventory"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] }),
       ]);
+    },
+    onError: (error) => {
+      toast.error(`Unable to update order: ${error.message}`);
+    },
+  });
+
+  const deleteOrderMutation = useMutation({
+    mutationFn: async (orderId: number) => {
+      return apiFetch<void>(`/api/admin/orders/${orderId}`, { method: "DELETE" }, true);
+    },
+    onSuccess: async () => {
+      toast.success("Order deleted");
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-inventory"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] }),
+      ]);
+    },
+    onError: (error) => {
+      toast.error(`Unable to delete order: ${error.message}`);
     },
   });
 
@@ -221,6 +245,20 @@ function AdminOrdersPage() {
                   className="inline-flex items-center gap-1 rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1.5 text-xs font-semibold text-cyan-700"
                 >
                   Receipt
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(`Delete order #${order.id}?`)) {
+                      deleteOrderMutation.mutate(order.id);
+                    }
+                  }}
+                  aria-label={`Delete order #${order.id}`}
+                  title={`Delete order #${order.id}`}
+                  disabled={deleteOrderMutation.isPending}
+                  className="inline-flex items-center gap-1 rounded-full border border-rose-200 px-3 py-1.5 text-xs font-semibold text-rose-700 disabled:opacity-50"
+                >
+                  <Trash2 className="size-3.5" /> Delete
                 </button>
               </div>,
             ])}

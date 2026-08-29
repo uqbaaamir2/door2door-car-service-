@@ -4,7 +4,7 @@ from sqlalchemy import text
 
 from .config import settings
 from .database import Base, engine
-from .routes import admin_router, public_router, customer_router
+from .routes import admin_router, ai_router, public_router, customer_router
 
 app = FastAPI(title=settings.app_name)
 
@@ -48,6 +48,12 @@ def on_startup() -> None:
             )
             connection.execute(
                 text(
+                    "ALTER TABLE customers "
+                    "ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE"
+                )
+            )
+            connection.execute(
+                text(
                     "ALTER TYPE orderstatus ADD VALUE IF NOT EXISTS 'cancelled'"
                 )
             )
@@ -61,3 +67,4 @@ def health_check() -> dict[str, str]:
 app.include_router(public_router)
 app.include_router(admin_router)
 app.include_router(customer_router)
+app.include_router(ai_router)

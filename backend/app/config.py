@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     admin_password: str = "admin123"
     admin_token: str = "car-services-admin-token"
     customer_auth_secret: str = "change-this-customer-secret"
+    mail_username: str
+    mail_password: str
+    mail_from: str
     cors_origins: list[str] = [
         "http://localhost:8080",
     ]

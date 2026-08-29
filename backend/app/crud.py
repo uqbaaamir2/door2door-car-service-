@@ -14,15 +14,21 @@ from .models import (
 )
 from .schemas import (
     BorrowingCreate,
+    BorrowingUpdate,
     CustomerCreate,
     CustomerRegister,
+    CustomerProfileUpdate,
     ExpenseCreate,
+    ExpenseUpdate,
     InventoryItemCreate,
+    InventoryItemUpdate,
     LendingCreate,
+    LendingUpdate,
     InventoryUsageCreate,
     OrderUpdate,
     PublicOrderCreate,
     TeamMemberCreate,
+    TeamMemberUpdate,
 )
 
 SERVICE_SUBCATEGORIES = {
@@ -83,6 +89,21 @@ def create_customer(db: Session, customer: CustomerCreate) -> Customer:
     db.commit()
     db.refresh(record)
     return record
+
+
+def update_customer(db: Session, customer: Customer, payload: CustomerProfileUpdate) -> Customer:
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(customer, key, value)
+    db.commit()
+    db.refresh(customer)
+    return customer
+
+
+def deactivate_customer(db: Session, customer: Customer) -> Customer:
+    customer.is_active = False
+    db.commit()
+    db.refresh(customer)
+    return customer
 
 
 def create_public_order(db: Session, payload: PublicOrderCreate) -> ServiceOrder:
@@ -162,12 +183,36 @@ def update_order(db: Session, order: ServiceOrder, payload: OrderUpdate) -> Serv
     return order
 
 
+def delete_order(db: Session, order: ServiceOrder) -> None:
+    for usage in order.inventory_usages:
+        inventory_item = db.get(InventoryItem, usage.inventory_item_id)
+        if inventory_item is not None:
+            inventory_item.quantity += usage.quantity_used
+    db.delete(order)
+    db.commit()
+
+
 def create_team_member(db: Session, payload: TeamMemberCreate) -> TeamMember:
     record = TeamMember(**payload.model_dump())
     db.add(record)
     db.commit()
     db.refresh(record)
     return record
+
+
+def update_team_member(db: Session, member: TeamMember, payload: TeamMemberUpdate) -> TeamMember:
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(member, key, value)
+    db.commit()
+    db.refresh(member)
+    return member
+
+
+def delete_team_member(db: Session, member: TeamMember) -> None:
+    if member.orders:
+        raise ValueError("Team member cannot be deleted while assigned orders exist")
+    db.delete(member)
+    db.commit()
 
 
 def create_inventory_item(db: Session, payload: InventoryItemCreate) -> InventoryItem:
@@ -178,12 +223,38 @@ def create_inventory_item(db: Session, payload: InventoryItemCreate) -> Inventor
     return record
 
 
+def update_inventory_item(db: Session, item: InventoryItem, payload: InventoryItemUpdate) -> InventoryItem:
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(item, key, value)
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+def delete_inventory_item(db: Session, item: InventoryItem) -> None:
+    db.delete(item)
+    db.commit()
+
+
 def create_expense(db: Session, payload: ExpenseCreate) -> Expense:
     record = Expense(**payload.model_dump())
     db.add(record)
     db.commit()
     db.refresh(record)
     return record
+
+
+def update_expense(db: Session, expense: Expense, payload: ExpenseUpdate) -> Expense:
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(expense, key, value)
+    db.commit()
+    db.refresh(expense)
+    return expense
+
+
+def delete_expense(db: Session, expense: Expense) -> None:
+    db.delete(expense)
+    db.commit()
 
 
 def create_borrowing(db: Session, payload: BorrowingCreate) -> Borrowing:
@@ -194,12 +265,38 @@ def create_borrowing(db: Session, payload: BorrowingCreate) -> Borrowing:
     return record
 
 
+def update_borrowing(db: Session, borrowing: Borrowing, payload: BorrowingUpdate) -> Borrowing:
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(borrowing, key, value)
+    db.commit()
+    db.refresh(borrowing)
+    return borrowing
+
+
+def delete_borrowing(db: Session, borrowing: Borrowing) -> None:
+    db.delete(borrowing)
+    db.commit()
+
+
 def create_lending(db: Session, payload: LendingCreate) -> Lending:
     record = Lending(**payload.model_dump())
     db.add(record)
     db.commit()
     db.refresh(record)
     return record
+
+
+def update_lending(db: Session, lending: Lending, payload: LendingUpdate) -> Lending:
+    for key, value in payload.model_dump(exclude_unset=True).items():
+        setattr(lending, key, value)
+    db.commit()
+    db.refresh(lending)
+    return lending
+
+
+def delete_lending(db: Session, lending: Lending) -> None:
+    db.delete(lending)
+    db.commit()
 
 
 def get_pnl(db: Session) -> dict[str, float]:

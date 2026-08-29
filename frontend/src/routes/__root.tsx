@@ -13,6 +13,8 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { Navigation } from "../components/Navigation";
+import { Chatbot } from "../components/chatbot/chatbot";
+import { WhatsAppButton } from "../components/WhatsAppButton";
 import { Toaster } from "../components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -167,6 +169,8 @@ function RootComponent() {
       </main>
       {!isAdminRoute && <Footer />}
       <Toaster />
+      <WhatsAppButton />
+      <Chatbot />
     </QueryClientProvider>
   );
 }

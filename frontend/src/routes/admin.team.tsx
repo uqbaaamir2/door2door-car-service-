@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { CarFront } from "lucide-react";
+import { CarFront, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -33,6 +33,7 @@ function AdminTeamPage() {
   const queryClient = useQueryClient();
   const session = useAdminSession();
   const [teamModalOpen, setTeamModalOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [teamForm, setTeamForm] = useState<TeamFormState>({
     name: "",
     role: "mechanic",
@@ -87,7 +88,88 @@ function AdminTeamPage() {
         queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] }),
       ]);
     },
+    onError: (error) => {
+      toast.error(`Unable to add team member: ${error.message}`);
+    },
   });
+
+  const updateTeamMutation = useMutation({
+    mutationFn: async () => {
+      if (!editingMember) {
+        throw new Error("No team member selected");
+      }
+      return apiFetch<TeamMember>(
+        `/api/admin/team-members/${editingMember.id}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({
+            name: teamForm.name,
+            role: teamForm.role,
+            phone_number: teamForm.phone_number || null,
+            is_active: teamForm.is_active,
+          }),
+        },
+        true,
+      );
+    },
+    onSuccess: async () => {
+      toast.success("Team member updated");
+      setTeamModalOpen(false);
+      setEditingMember(null);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["admin-team"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] }),
+      ]);
+    },
+    onError: (error) => {
+      toast.error(`Unable to update team member: ${error.message}`);
+    },
+  });
+
+  const deleteTeamMutation = useMutation({
+    mutationFn: async (memberId: number) => {
+      return apiFetch<void>(`/api/admin/team-members/${memberId}`, { method: "DELETE" }, true);
+    },
+    onSuccess: async () => {
+      toast.success("Team member deleted");
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["admin-team"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-orders"] }),
+        queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] }),
+      ]);
+    },
+    onError: (error) => {
+      toast.error(`Unable to delete team member: ${error.message}`);
+    },
+  });
+
+  const resetTeamForm = () => {
+    setTeamForm({ name: "", role: "mechanic", phone_number: "", is_active: true });
+  };
+
+  const closeTeamModal = () => {
+    setTeamModalOpen(false);
+    setEditingMember(null);
+    resetTeamForm();
+  };
+
+  const openAddTeamModal = () => {
+    setEditingMember(null);
+    resetTeamForm();
+    setTeamModalOpen(true);
+  };
+
+  const openEditTeamModal = (member: TeamMember) => {
+    setEditingMember(member);
+    setTeamForm({
+      name: member.name,
+      role: member.role,
+      phone_number: member.phone_number ?? "",
+      is_active: member.is_active,
+    });
+    setTeamModalOpen(true);
+  };
 
   if (!session.token) {
     return (
@@ -112,7 +194,7 @@ function AdminTeamPage() {
       logout={session.logout}
       actions={
         <button
-          onClick={() => setTeamModalOpen(true)}
+          onClick={openAddTeamModal}
           className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white"
         >
           <CarFront className="size-4" /> Add staff
@@ -124,13 +206,38 @@ function AdminTeamPage() {
 
         <Panel title="Team / Staff" actionLabel={`${team.length} total`}>
           <Table
-            headers={["Name", "Role", "Phone", "Active", "Joined"]}
+            headers={["Name", "Role", "Phone", "Active", "Joined", "Actions"]}
             rows={team.map((member) => [
               member.name,
               member.role,
               member.phone_number ?? "-",
               member.is_active ? "Yes" : "No",
               new Date(member.created_at).toLocaleDateString(),
+              <div key={`actions-${member.id}`} className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => openEditTeamModal(member)}
+                  aria-label={`Edit ${member.name}`}
+                  title={`Edit ${member.name}`}
+                  className="rounded-lg p-2 text-sky-700 transition hover:bg-sky-50"
+                >
+                  <Pencil className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (window.confirm(`Delete ${member.name}? Team members with assigned orders cannot be deleted.`)) {
+                      deleteTeamMutation.mutate(member.id);
+                    }
+                  }}
+                  aria-label={`Delete ${member.name}`}
+                  title={`Delete ${member.name}`}
+                  disabled={deleteTeamMutation.isPending}
+                  className="rounded-lg p-2 text-rose-700 transition hover:bg-rose-50 disabled:opacity-50"
+                >
+                  <Trash2 className="size-4" />
+                </button>
+              </div>,
             ])}
             emptyMessage="No team members yet."
           />
@@ -138,12 +245,16 @@ function AdminTeamPage() {
       </div>
 
       {teamModalOpen && (
-        <Modal title="Add staff member" onClose={() => setTeamModalOpen(false)}>
+        <Modal title={editingMember ? `Edit staff member #${editingMember.id}` : "Add staff member"} onClose={closeTeamModal}>
           <form
             className="space-y-4"
             onSubmit={(event) => {
               event.preventDefault();
-              teamMutation.mutate();
+              if (editingMember) {
+                updateTeamMutation.mutate();
+              } else {
+                teamMutation.mutate();
+              }
             }}
           >
             <div className="grid gap-4 md:grid-cols-2">
@@ -187,17 +298,21 @@ function AdminTeamPage() {
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => setTeamModalOpen(false)}
+                onClick={closeTeamModal}
                 className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-600"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={teamMutation.isPending}
+                disabled={teamMutation.isPending || updateTeamMutation.isPending}
                 className="rounded-xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white disabled:opacity-70"
               >
-                {teamMutation.isPending ? "Saving..." : "Add staff"}
+                {teamMutation.isPending || updateTeamMutation.isPending
+                  ? "Saving..."
+                  : editingMember
+                    ? "Save changes"
+                    : "Add staff"}
               </button>
             </div>
           </form>

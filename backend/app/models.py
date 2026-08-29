@@ -40,10 +40,21 @@ class Customer(Base):
     email = Column(String(255), nullable=True, index=True)
     password_hash = Column(String(255), nullable=True)
     location = Column(Text, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     orders = relationship("ServiceOrder", back_populates="customer", cascade="all, delete-orphan")
+    
+class CustomerPasswordResetToken(Base):
+    __tablename__ = "customer_password_reset_tokens"
 
+    id = Column(Integer, primary_key=True, index=True)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False, index=True)
+    token_hash = Column(String(255), nullable=False, unique=True, index=True)
+    expires_at = Column(DateTime, nullable=False)
+    used = Column(Boolean, nullable=False, default=False)
+
+    customer = relationship("Customer")
 
 class ServiceOrder(Base):
     __tablename__ = "service_orders"

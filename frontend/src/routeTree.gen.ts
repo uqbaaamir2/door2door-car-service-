@@ -14,14 +14,19 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as AdminBorrowingsRouteImport } from './routes/admin.borrowings'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminExpensesRouteImport } from './routes/admin.expenses'
 import { Route as AdminInventoryRouteImport } from './routes/admin.inventory'
+import { Route as AdminLendingsRouteImport } from './routes/admin.lendings'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminTeamRouteImport } from './routes/admin.team'
 import { Route as CustomerDashboardRouteImport } from './routes/customer.dashboard'
+import { Route as CustomerForgotPasswordRouteImport } from './routes/customer.forgot-password'
 import { Route as CustomerLoginRouteImport } from './routes/customer.login'
 import { Route as CustomerRegisterRouteImport } from './routes/customer.register'
+import { Route as CustomerResetPasswordRouteImport } from './routes/customer.reset-password'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,6 +53,11 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminBorrowingsRoute = AdminBorrowingsRouteImport.update({
+  id: '/admin/borrowings',
+  path: '/admin/borrowings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminCustomersRoute = AdminCustomersRouteImport.update({
   id: '/admin/customers',
   path: '/admin/customers',
@@ -58,9 +68,19 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminExpensesRoute = AdminExpensesRouteImport.update({
+  id: '/admin/expenses',
+  path: '/admin/expenses',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminInventoryRoute = AdminInventoryRouteImport.update({
   id: '/admin/inventory',
   path: '/admin/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminLendingsRoute = AdminLendingsRouteImport.update({
+  id: '/admin/lendings',
+  path: '/admin/lendings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminOrdersRoute = AdminOrdersRouteImport.update({
@@ -78,6 +98,11 @@ const CustomerDashboardRoute = CustomerDashboardRouteImport.update({
   path: '/customer/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerForgotPasswordRoute = CustomerForgotPasswordRouteImport.update({
+  id: '/customer/forgot-password',
+  path: '/customer/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomerLoginRoute = CustomerLoginRouteImport.update({
   id: '/customer/login',
   path: '/customer/login',
@@ -88,6 +113,11 @@ const CustomerRegisterRoute = CustomerRegisterRouteImport.update({
   path: '/customer/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerResetPasswordRoute = CustomerResetPasswordRouteImport.update({
+  id: '/customer/reset-password',
+  path: '/customer/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,14 +125,19 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/services': typeof ServicesRoute
+  '/admin/borrowings': typeof AdminBorrowingsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/expenses': typeof AdminExpensesRoute
   '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/lendings': typeof AdminLendingsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/team': typeof AdminTeamRoute
   '/customer/dashboard': typeof CustomerDashboardRoute
+  '/customer/forgot-password': typeof CustomerForgotPasswordRoute
   '/customer/login': typeof CustomerLoginRoute
   '/customer/register': typeof CustomerRegisterRoute
+  '/customer/reset-password': typeof CustomerResetPasswordRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,14 +145,19 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/services': typeof ServicesRoute
+  '/admin/borrowings': typeof AdminBorrowingsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/expenses': typeof AdminExpensesRoute
   '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/lendings': typeof AdminLendingsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/team': typeof AdminTeamRoute
   '/customer/dashboard': typeof CustomerDashboardRoute
+  '/customer/forgot-password': typeof CustomerForgotPasswordRoute
   '/customer/login': typeof CustomerLoginRoute
   '/customer/register': typeof CustomerRegisterRoute
+  '/customer/reset-password': typeof CustomerResetPasswordRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -126,14 +166,19 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
   '/services': typeof ServicesRoute
+  '/admin/borrowings': typeof AdminBorrowingsRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/expenses': typeof AdminExpensesRoute
   '/admin/inventory': typeof AdminInventoryRoute
+  '/admin/lendings': typeof AdminLendingsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/team': typeof AdminTeamRoute
   '/customer/dashboard': typeof CustomerDashboardRoute
+  '/customer/forgot-password': typeof CustomerForgotPasswordRoute
   '/customer/login': typeof CustomerLoginRoute
   '/customer/register': typeof CustomerRegisterRoute
+  '/customer/reset-password': typeof CustomerResetPasswordRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -143,14 +188,19 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/services'
+    | '/admin/borrowings'
     | '/admin/customers'
     | '/admin/dashboard'
+    | '/admin/expenses'
     | '/admin/inventory'
+    | '/admin/lendings'
     | '/admin/orders'
     | '/admin/team'
     | '/customer/dashboard'
+    | '/customer/forgot-password'
     | '/customer/login'
     | '/customer/register'
+    | '/customer/reset-password'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -158,14 +208,19 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/services'
+    | '/admin/borrowings'
     | '/admin/customers'
     | '/admin/dashboard'
+    | '/admin/expenses'
     | '/admin/inventory'
+    | '/admin/lendings'
     | '/admin/orders'
     | '/admin/team'
     | '/customer/dashboard'
+    | '/customer/forgot-password'
     | '/customer/login'
     | '/customer/register'
+    | '/customer/reset-password'
   id:
     | '__root__'
     | '/'
@@ -173,14 +228,19 @@ export interface FileRouteTypes {
     | '/contact'
     | '/faq'
     | '/services'
+    | '/admin/borrowings'
     | '/admin/customers'
     | '/admin/dashboard'
+    | '/admin/expenses'
     | '/admin/inventory'
+    | '/admin/lendings'
     | '/admin/orders'
     | '/admin/team'
     | '/customer/dashboard'
+    | '/customer/forgot-password'
     | '/customer/login'
     | '/customer/register'
+    | '/customer/reset-password'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -189,14 +249,19 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
   ServicesRoute: typeof ServicesRoute
+  AdminBorrowingsRoute: typeof AdminBorrowingsRoute
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminExpensesRoute: typeof AdminExpensesRoute
   AdminInventoryRoute: typeof AdminInventoryRoute
+  AdminLendingsRoute: typeof AdminLendingsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminTeamRoute: typeof AdminTeamRoute
   CustomerDashboardRoute: typeof CustomerDashboardRoute
+  CustomerForgotPasswordRoute: typeof CustomerForgotPasswordRoute
   CustomerLoginRoute: typeof CustomerLoginRoute
   CustomerRegisterRoute: typeof CustomerRegisterRoute
+  CustomerResetPasswordRoute: typeof CustomerResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -236,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/borrowings': {
+      id: '/admin/borrowings'
+      path: '/admin/borrowings'
+      fullPath: '/admin/borrowings'
+      preLoaderRoute: typeof AdminBorrowingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/customers': {
       id: '/admin/customers'
       path: '/admin/customers'
@@ -250,11 +322,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/expenses': {
+      id: '/admin/expenses'
+      path: '/admin/expenses'
+      fullPath: '/admin/expenses'
+      preLoaderRoute: typeof AdminExpensesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/inventory': {
       id: '/admin/inventory'
       path: '/admin/inventory'
       fullPath: '/admin/inventory'
       preLoaderRoute: typeof AdminInventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/lendings': {
+      id: '/admin/lendings'
+      path: '/admin/lendings'
+      fullPath: '/admin/lendings'
+      preLoaderRoute: typeof AdminLendingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/orders': {
@@ -278,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer/forgot-password': {
+      id: '/customer/forgot-password'
+      path: '/customer/forgot-password'
+      fullPath: '/customer/forgot-password'
+      preLoaderRoute: typeof CustomerForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customer/login': {
       id: '/customer/login'
       path: '/customer/login'
@@ -292,6 +385,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer/reset-password': {
+      id: '/customer/reset-password'
+      path: '/customer/reset-password'
+      fullPath: '/customer/reset-password'
+      preLoaderRoute: typeof CustomerResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -301,14 +401,19 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
   ServicesRoute: ServicesRoute,
+  AdminBorrowingsRoute: AdminBorrowingsRoute,
   AdminCustomersRoute: AdminCustomersRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminExpensesRoute: AdminExpensesRoute,
   AdminInventoryRoute: AdminInventoryRoute,
+  AdminLendingsRoute: AdminLendingsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminTeamRoute: AdminTeamRoute,
   CustomerDashboardRoute: CustomerDashboardRoute,
+  CustomerForgotPasswordRoute: CustomerForgotPasswordRoute,
   CustomerLoginRoute: CustomerLoginRoute,
   CustomerRegisterRoute: CustomerRegisterRoute,
+  CustomerResetPasswordRoute: CustomerResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

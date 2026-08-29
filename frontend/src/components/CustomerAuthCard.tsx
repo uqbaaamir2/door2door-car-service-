@@ -162,7 +162,16 @@ export function CustomerAuthCard({ mode }: { mode: "login" | "register" }) {
                   : "Create Account"}
             </button>
           </form>
-
+  {isLogin && (
+  <div className="mt-3 text-right">
+    <Link
+    to="/customer/forgot-password"
+      className="text-sm font-semibold text-primary hover:underline"
+    >
+      Forgot password?
+    </Link>
+  </div>
+)}
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <Link

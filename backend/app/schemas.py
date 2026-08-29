@@ -42,6 +42,7 @@ class CustomerCreate(CustomerBase):
 
 class CustomerRead(CustomerBase):
     id: int
+    is_active: bool
     created_at: datetime
 
     model_config = {"from_attributes": True}
@@ -54,7 +55,14 @@ class CustomerRegister(BaseModel):
     phone_number: str = Field(min_length=7, max_length=30)
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
+class CustomerForgotPasswordRequest(BaseModel):
+    email: EmailStr
 
+
+class CustomerResetPasswordRequest(BaseModel):
+    token: str = Field(min_length=1)
+    new_password: str = Field(min_length=8, max_length=128)
+    confirm_password: str = Field(min_length=8, max_length=128)
 
 class CustomerLogin(BaseModel):
     email: EmailStr
@@ -146,6 +154,13 @@ class TeamMemberCreate(TeamMemberBase):
     pass
 
 
+class TeamMemberUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=2, max_length=150)
+    role: Optional[TeamRole] = None
+    phone_number: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
 class TeamMemberRead(TeamMemberBase):
     id: int
     created_at: datetime
@@ -165,6 +180,14 @@ class InventoryItemCreate(InventoryItemBase):
     pass
 
 
+class InventoryItemUpdate(BaseModel):
+    name: Optional[str] = Field(default=None, min_length=2, max_length=150)
+    category: Optional[InventoryCategory] = None
+    quantity: Optional[float] = None
+    unit: Optional[str] = None
+    cost_per_unit: Optional[float] = None
+
+
 class InventoryItemRead(InventoryItemBase):
     id: int
     created_at: datetime
@@ -180,6 +203,12 @@ class ExpenseBase(BaseModel):
 
 class ExpenseCreate(ExpenseBase):
     pass
+
+
+class ExpenseUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, min_length=2, max_length=150)
+    amount: Optional[float] = None
+    category: Optional[str] = None
 
 
 class ExpenseRead(ExpenseBase):
@@ -201,6 +230,14 @@ class BorrowingCreate(BorrowingBase):
     pass
 
 
+class BorrowingUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, min_length=2, max_length=150)
+    amount: Optional[float] = None
+    repaid_amount: Optional[float] = None
+    category: Optional[str] = None
+    notes: Optional[str] = None
+
+
 class BorrowingRead(BorrowingBase):
     id: int
     created_at: datetime
@@ -218,6 +255,14 @@ class LendingBase(BaseModel):
 
 class LendingCreate(LendingBase):
     pass
+
+
+class LendingUpdate(BaseModel):
+    title: Optional[str] = Field(default=None, min_length=2, max_length=150)
+    amount: Optional[float] = None
+    collected_amount: Optional[float] = None
+    category: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class LendingRead(LendingBase):
@@ -252,6 +297,20 @@ class DashboardSummary(BaseModel):
     total_repaid: float
     total_lent: float
     total_collected: float
+
+
+class AIPredictionRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
+
+
+class AIPredictionResponse(BaseModel):
+    label: str
+    confidence: float = Field(ge=0, le=1)
+
+
+class AIHealthResponse(BaseModel):
+    status: str
+    classes: int
 
 
 class OrderReceiptResponse(BaseModel):

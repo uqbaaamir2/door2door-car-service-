@@ -114,3 +114,9 @@ def require_customer(
             detail="Invalid or expired customer session",
         )
     return customer_id
+def generate_customer_reset_token() -> str:
+    return secrets.token_urlsafe(32)
+
+
+def hash_customer_reset_token(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()

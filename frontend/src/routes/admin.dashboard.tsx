@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ClipboardList, PackagePlus, Receipt, Users } from "lucide-react";
 
 import { apiFetch } from "@/lib/api";
@@ -34,6 +34,7 @@ export const Route = createFileRoute("/admin/dashboard")({
 
 function AdminDashboardPage() {
   const session = useAdminSession();
+  const navigate = useNavigate();
 
   const loginMutation = useMutation({
     mutationFn: async () => {
@@ -100,25 +101,52 @@ function AdminDashboardPage() {
           description="Live service operations, quick actions, and business numbers in one place."
           actions={
             <>
-              <QuickAction title="New Order" subtitle="Create booking" icon={ClipboardList} />
-              <QuickAction title="Inventory" subtitle="Add stock" icon={PackagePlus} />
-              <QuickAction title="Team" subtitle="Add staff" icon={Users} />
-              <QuickAction title="Receipt" subtitle="Print bill" icon={Receipt} />
+              <QuickAction title="New Order" subtitle="Create booking" icon={ClipboardList} onClick={() => navigate({ to: "/admin/orders" })} />
+              <QuickAction title="Inventory" subtitle="Add stock" icon={PackagePlus} onClick={() => navigate({ to: "/admin/inventory" })} />
+              <QuickAction title="Team" subtitle="Add staff" icon={Users} onClick={() => navigate({ to: "/admin/team" })} />
+              <QuickAction title="Receipt" subtitle="Print bill" icon={Receipt} onClick={() => navigate({ to: "/admin/orders" })} />
             </>
           }
         />
 
         <section className="grid gap-4 lg:grid-cols-3 xl:grid-cols-6">
-          <Card title="Revenue" value={dashboard ? `Rs ${dashboard.revenue.toLocaleString()}` : "Rs 0.00"} />
-          <Card title="Inventory Cost" value={dashboard ? `Rs ${dashboard.inventory_costs.toLocaleString()}` : "Rs 0.00"} />
-          <Card title="Staff Payments" value={dashboard ? `Rs ${dashboard.staff_payments.toLocaleString()}` : "Rs 0.00"} />
-          <Card title="Expenses" value={dashboard ? `Rs ${dashboard.expenses.toLocaleString()}` : "Rs 0.00"} />
-          <Card title="Profit" value={dashboard ? `Rs ${dashboard.profit.toLocaleString()}` : "Rs 0.00"} />
-          <Card title="Direct Costs" value={dashboard ? `Rs ${dashboard.direct_costs.toLocaleString()}` : "Rs 0.00"} />
+          <Card
+            title="Revenue"
+            value={dashboard ? `Rs ${dashboard.revenue.toLocaleString()}` : "Rs 0.00"}
+            onClick={() => navigate({ to: "/admin/orders" })}
+          />
+          <Card
+            title="Inventory Cost"
+            value={dashboard ? `Rs ${dashboard.inventory_costs.toLocaleString()}` : "Rs 0.00"}
+            onClick={() => navigate({ to: "/admin/inventory" })}
+          />
+          <Card
+            title="Staff Payments"
+            value={dashboard ? `Rs ${dashboard.staff_payments.toLocaleString()}` : "Rs 0.00"}
+            onClick={() => navigate({ to: "/admin/team" })}
+          />
+          <Card
+            title="Expenses"
+            value={dashboard ? `Rs ${dashboard.expenses.toLocaleString()}` : "Rs 0.00"}
+            onClick={() => navigate({ to: "/admin/expenses" })}
+          />
+          <Card
+            title="Profit"
+            value={dashboard ? `Rs ${dashboard.profit.toLocaleString()}` : "Rs 0.00"}
+            onClick={() => navigate({ to: "/admin/dashboard" })}
+          />
+          <Card
+            title="Direct Costs"
+            value={dashboard ? `Rs ${dashboard.direct_costs.toLocaleString()}` : "Rs 0.00"}
+            onClick={() => navigate({ to: "/admin/expenses" })}
+          />
         </section>
 
         <div className="grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
-          <section className="rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+          <section
+            onClick={() => navigate({ to: "/admin/orders" })}
+            className="cursor-pointer rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md"
+          >
             <div className="flex items-center justify-between gap-4 border-b border-slate-200 px-6 py-5">
               <div>
                 <h2 className="text-lg font-bold text-slate-950">Recent Orders</h2>
@@ -144,8 +172,11 @@ function AdminDashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-            <div className="border-b border-slate-200 px-6 py-5">
+          <section className="cursor-pointer rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:border-slate-300 hover:shadow-md">
+            <div
+              onClick={() => navigate({ to: "/admin/dashboard" })}
+              className="border-b border-slate-200 px-6 py-5"
+            >
               <h2 className="text-lg font-bold text-slate-950">Business Snapshot</h2>
               <p className="mt-1 text-sm text-slate-500">Live operational totals</p>
             </div>

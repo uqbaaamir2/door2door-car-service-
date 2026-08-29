@@ -1,11 +1,11 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { ArrowRight, ClipboardList, LayoutDashboard, LogOut, ShieldCheck, Store, Users, Wrench } from "lucide-react";
+import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { ArrowRight, Banknote, ClipboardList, HandCoins, LayoutDashboard, LogOut, Receipt, ShieldCheck, Store, Users, Wrench } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { apiFetch, setAdminToken } from "@/lib/api";
 
-export type AdminSection = "dashboard" | "customers" | "orders" | "inventory" | "team";
+export type AdminSection = "dashboard" | "customers" | "orders" | "inventory" | "team" | "expenses" | "borrowings" | "lendings";
 
 export type DashboardSummary = {
   customers: number;
@@ -31,6 +31,7 @@ export type Customer = {
   phone_number: string;
   email: string | null;
   location: string | null;
+  is_active: boolean;
   created_at: string;
 };
 
@@ -131,6 +132,9 @@ export const adminNavItems: Array<{ key: AdminSection; label: string; href: stri
   { key: "orders", label: "Orders", href: "/admin/orders", icon: ClipboardList },
   { key: "inventory", label: "Inventory", href: "/admin/inventory", icon: Store },
   { key: "team", label: "Team / Staff", href: "/admin/team", icon: Wrench },
+  { key: "expenses", label: "Expenses", href: "/admin/expenses", icon: Receipt },
+  { key: "borrowings", label: "Borrowings", href: "/admin/borrowings", icon: Banknote },
+  { key: "lendings", label: "Lendings", href: "/admin/lendings", icon: HandCoins },
 ];
 
 export const inventoryCategories = ["oil", "air-filter", "oil-filter"];
@@ -187,12 +191,16 @@ export function AdminShell({
   logout: () => void;
 }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#f4f7fb] text-slate-950">
       <div className="flex min-h-screen">
         <aside className="hidden w-[286px] flex-col border-r border-slate-200 bg-[#0b1630] text-slate-100 lg:flex">
-          <div className="flex items-center gap-3 border-b border-white/10 px-5 py-5">
+          <div
+            onClick={() => navigate({ to: "/" })}
+            className="flex cursor-pointer items-center gap-3 border-b border-white/10 px-5 py-5 transition-all duration-200 hover:bg-white/5"
+          >
             <div className="grid size-12 place-items-center rounded-xl bg-gradient-to-br from-cyan-400 to-teal-500 text-[#04111c] shadow-lg shadow-cyan-500/20">
               <Wrench className="size-6" />
             </div>
@@ -209,7 +217,7 @@ export function AdminShell({
               return (
                 <Link
                   key={item.key}
-                  to={item.href as "/admin/dashboard" | "/admin/customers" | "/admin/orders" | "/admin/inventory" | "/admin/team"}
+                  to={item.href as "/admin/dashboard" | "/admin/customers" | "/admin/orders" | "/admin/inventory" | "/admin/team" | "/admin/expenses" | "/admin/borrowings" | "/admin/lendings"}
                   className={[
                     "mb-1 flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm font-medium transition",
                     active
@@ -385,11 +393,16 @@ export function Panel({
   );
 }
 
-export function Card({ title, value }: { title: string; value: string }) {
+export function Card({ title, value, onClick }: { title: string; value: string; onClick?: () => void }) {
   return (
-    <div className="rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-slate-500">{title}</p>
-      <p className="mt-3 text-3xl font-extrabold tracking-tight text-slate-950">{value}</p>
+    <div
+      onClick={onClick}
+      className={`rounded-[1.75rem] border border-slate-200 bg-white p-5 shadow-sm ${
+        onClick ? "cursor-pointer transition-all duration-200 hover:border-slate-300 hover:shadow-md hover:scale-[1.02]" : ""
+      }`}
+    >
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">{title}</p>
+      <p className="mt-2 text-lg font-bold text-slate-950">{value}</p>
     </div>
   );
 }
@@ -404,9 +417,14 @@ export function MetricChip({ label, value, tone }: { label: string; value: strin
   );
 }
 
-export function QuickAction({ title, subtitle, icon: Icon }: { title: string; subtitle: string; icon: typeof LayoutDashboard }) {
+export function QuickAction({ title, subtitle, icon: Icon, onClick }: { title: string; subtitle: string; icon: typeof LayoutDashboard; onClick?: () => void }) {
   return (
-    <div className="flex min-w-[180px] items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+    <div
+      onClick={onClick}
+      className={`flex min-w-[180px] items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 ${
+        onClick ? "cursor-pointer transition-all duration-200 hover:border-slate-300 hover:bg-slate-100 hover:shadow-sm" : ""
+      }`}
+    >
       <div className="grid size-11 place-items-center rounded-2xl bg-white text-cyan-700 shadow-sm">
         <Icon className="size-5" />
       </div>
