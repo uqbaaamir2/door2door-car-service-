@@ -71,7 +71,7 @@ function HomePage() {
       {/* HERO */}
       <section ref={heroRef} className="relative grid-lines">
         <motion.div style={{ opacity: glowOpacity }} className="hero-gradient absolute inset-0" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-16 pt-32 md:pt-40 lg:grid-cols-[1.05fr_1fr] lg:pb-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 pb-16 pt-20 md:pt-28 lg:grid-cols-[1.05fr_1fr] lg:pb-24">
           <motion.div initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.14 } } }}>
             <motion.span
               variants={fadeLeft}
